@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Attendance | Biometric Face Recognition & Geofence Radar</title>
+  <meta name="description"
+    content="Smart Attendance - Next-Generation Enterprise Portal featuring registered face comparison, classroom GPS radar geofencing, and academic analytics." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- FontAwesome 6 Pro Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Leaflet Maps CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Favicon & Brand Asset -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Enterprise Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+       TOP NAVBAR
+       ============================================================ -->
+  <header class="app-navbar">
+    <div class="nav-brand" id="navBrandHome">
+      <div class="brand-icon">
+        <img src="assets/logo.png" alt="Smart Attendance Logo" class="brand-logo-img" />
+      </div>
+      <div>
+        <span class="brand-title">Smart Attendance</span>
+        <span class="brand-badge">PRO AI</span>
+      </div>
+    </div>
+
+    <!-- Live Status & Digital Clock -->
+    <div class="nav-center-status">
+      <div class="live-indicator">
+        <div class="pulsing-dot"></div>
+        <span>RADAR & CLOUD ONLINE</span>
+      </div>
+      <div class="nav-clock" id="navLiveClock">12:00:00 PM</div>
+    </div>
+
+    <div class="nav-actions">
+      <div class="nav-user-badge" id="navUserBadge" style="display: none;">
+        <div class="user-avatar-small"><i class="fas fa-user-graduate"></i></div>
+        <span id="navUserEmail">student@example.com</span>
+      </div>
+      <button class="btn btn-outline btn-sm" id="navLogoutBtn" style="display: none;">
+        <i class="fas fa-arrow-right-from-bracket"></i> Sign Out
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       VIEW 1: HERO / ROLE SELECTION
+       ============================================================ -->
+  <main class="view-container active" id="roleSelectionView">
+    <section class="hero-section">
+      <div class="hero-icon-wrapper">
+        <img src="assets/logo.png" alt="Smart Attendance Logo" class="hero-logo-img" />
+      </div>
+      <h1 class="hero-title">Smart Attendance</h1>
+      <p class="hero-subtitle">
+        Facial Biometric Comparison & Real-Time Classroom Geofence Radar System
+      </p>
+
+      <div class="role-cards-grid">
+        <!-- Student Role Card -->
+        <div class="role-card" id="selectStudentRoleCard">
+          <div class="role-card-icon">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <h2 class="role-card-title">Student Portal</h2>
+          <p class="role-card-desc">
+            Sign in or create a student account, verify live face against registered biometrics, and check classroom GPS
+            radar.
+          </p>
+          <button class="btn btn-primary btn-lg" style="width: 100%;">
+            <i class="fas fa-right-to-bracket"></i> Student Portal
+          </button>
+        </div>
+
+        <!-- Admin Role Card -->
+        <div class="role-card admin" id="selectAdminRoleCard">
+          <div class="role-card-icon">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <h2 class="role-card-title">Admin Portal</h2>
+          <p class="role-card-desc">
+            Manage student user IDs, delete old accounts, create timetables, view attendance heatmaps, and export CSVs.
+          </p>
+          <button class="btn btn-secondary btn-lg" style="width: 100%;">
+            <i class="fas fa-lock"></i> Admin Portal
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       VIEW 2: STUDENT AUTH (SIGN IN & CREATE NEW ACCOUNT)
+       ============================================================ -->
+  <section class="view-container" id="studentLoginView">
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <button class="btn btn-outline btn-sm" id="backToRoleFromStudent" style="margin-bottom: 1.5rem;">
+          <i class="fas fa-arrow-left"></i> Back to Main
+        </button>
+
+        <!-- Segmented Tab Switcher -->
+        <div class="auth-segmented-switch">
+          <button class="auth-switch-btn active" id="tabSignInBtn">
+            <i class="fas fa-right-to-bracket"></i> Sign In
+          </button>
+          <button class="auth-switch-btn" id="tabSignUpBtn">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+        </div>
+
+        <!-- TAB A: SIGN IN FORM -->
+        <div id="studentSignInContainer">
+          <div class="auth-header">
+            <div class="auth-icon">
+              <img src="assets/logo.png" alt="Smart Attendance Logo" class="auth-logo-img" />
+            </div>
+            <h2>Smart Attendance Login</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Sign in to verify face biometrics and mark present
+            </p>
+            <div style="margin-top: 8px;">
+              <span class="demo-pill" id="demoStudentPill"><i class="fas fa-wand-magic-sparkles"></i> Auto-fill Demo
+                Credentials</span>
+            </div>
+          </div>
+
+          <form id="studentLoginForm">
+            <div class="form-group">
+              <label class="form-label" for="studentEmailInput">Email Address</label>
+              <div class="form-input-group">
+                <i class="fas fa-envelope form-input-icon"></i>
+                <input type="email" id="studentEmailInput" class="form-input" placeholder="student@gmail.com"
+                  required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="studentPasswordInput">Password</label>
+              <div class="form-input-group">
+                <i class="fas fa-lock form-input-icon"></i>
+                <input type="password" id="studentPasswordInput" class="form-input" placeholder="Enter password"
+                  required />
+                <i class="fas fa-eye form-input-toggle"></i>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" id="studentLoginBtn"
+              style="width: 100%; margin-top: 1rem;">
+              <i class="fas fa-right-to-bracket"></i> SIGN IN
+            </button>
+          </form>
+        </div>
+
+        <!-- TAB B: CREATE NEW STUDENT ACCOUNT FORM -->
+        <form id="studentSignUpForm" style="display: none;">
+          <div class="auth-header" style="margin-bottom: 1.25rem;">
+            <div class="auth-icon"
+              style="background: rgba(16, 185, 129, 0.2); color: #34D399; border-color: rgba(16, 185, 129, 0.3);">
+              <i class="fas fa-id-card-clip"></i>
+            </div>
+            <h2>Register New Student</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Register a fresh student user ID and password</p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <div class="form-input-group">
+                <i class="fas fa-user form-input-icon"></i>
+                <input type="text" id="newStudentName" class="form-input" placeholder="e.g. Alex Johnson" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">USN / User ID</label>
+              <div class="form-input-group">
+                <i class="fas fa-hashtag form-input-icon"></i>
+                <input type="text" id="newStudentUsn" class="form-input" placeholder="e.g. 1MS22CS045" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="form-input-group">
+              <i class="fas fa-envelope form-input-icon"></i>
+              <input type="email" id="newStudentEmail" class="form-input" placeholder="student@gmail.com" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password (min 6 characters)</label>
+            <div class="form-input-group">
+              <i class="fas fa-lock form-input-icon"></i>
+              <input type="password" id="newStudentPassword" class="form-input" placeholder="Choose a password" required
+                minlength="6" />
+              <i class="fas fa-eye form-input-toggle"></i>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem;">
+            <div class="form-group">
+              <label class="form-label">Dept</label>
+              <input type="text" id="newStudentDept" class="form-input" placeholder="CSE" style="padding-left: 1rem;"
+                required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Semester</label>
+              <input type="text" id="newStudentSemester" class="form-input" placeholder="6" style="padding-left: 1rem;"
+                required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Section</label>
+              <input type="text" id="newStudentSection" class="form-input" placeholder="A" style="padding-left: 1rem;"
+                required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">College / Institute</label>
+            <div class="form-input-group">
+              <i class="fas fa-building-columns form-input-icon"></i>
+              <input type="text" id="newStudentCollege" class="form-input" placeholder="Smart Attendance Institute"
+                required />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-teal btn-lg" id="studentSignUpBtn"
+            style="width: 100%; margin-top: 0.5rem;">
+            <i class="fas fa-user-plus"></i> CREATE ACCOUNT
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       VIEW 3: ADMIN AUTH
+       ============================================================ -->
+  <section class="view-container" id="adminLoginView">
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <button class="btn btn-outline btn-sm" id="backToRoleFromAdmin" style="margin-bottom: 1.5rem;">
+          <i class="fas fa-arrow-left"></i> Back to Main
+        </button>
+
+        <div class="auth-header">
+          <div class="auth-icon">
+            <img src="assets/logo.png" alt="Smart Attendance Logo" class="auth-logo-img" />
+          </div>
+          <h2>Admin Login</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Sign in with authorized administrator credentials</p>
+          <div style="margin-top: 8px;">
+            <span class="demo-pill" id="demoAdminPill"><i class="fas fa-wand-magic-sparkles"></i> Auto-fill Admin
+              Credentials</span>
+          </div>
+        </div>
+
+        <form id="adminLoginForm">
+          <div class="form-group">
+            <label class="form-label" for="adminEmailInput">Admin Email Address</label>
+            <div class="form-input-group">
+              <i class="fas fa-envelope form-input-icon"></i>
+              <input type="email" id="adminEmailInput" class="form-input" placeholder="admin@gmail.com" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="adminPasswordInput">Admin Password</label>
+            <div class="form-input-group">
+              <i class="fas fa-lock form-input-icon"></i>
+              <input type="password" id="adminPasswordInput" class="form-input" placeholder="Enter admin password"
+                required />
+              <i class="fas fa-eye form-input-toggle"></i>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-secondary btn-lg" id="adminLoginBtn"
+            style="width: 100%; margin-top: 1rem;">
+            <i class="fas fa-shield-halved"></i> ADMIN SIGN IN
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       VIEW 4: STUDENT DASHBOARD
+       ============================================================ -->
+  <section class="view-container" id="studentDashboardView">
+    <!-- Hero Banner -->
+    <div class="dashboard-hero">
+      <div class="hero-user-info">
+        <div class="user-avatar-large" id="studentHeroAvatarContainer">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div>
+          <div style="font-size: 0.9rem; color: rgba(255,255,255,0.85); font-weight: 500;">Welcome back 👋</div>
+          <h2 id="studentHeroName" style="font-size: 2rem; margin: 2px 0 4px;">Smart Attendance</h2>
+          <div id="studentHeroDept" style="font-size: 0.95rem; color: rgba(255,255,255,0.95); font-weight: 600;">
+            Department • Section</div>
+          <div id="studentHeroEmail" style="font-size: 0.82rem; color: rgba(255,255,255,0.75);">student@gmail.com</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn btn-outline" id="btnEnrollFaceID"
+          style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.35);">
+          <i class="fas fa-camera"></i> Setup Face ID
+        </button>
+        <button class="btn btn-outline" id="studentLogoutBtn"
+          style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.35);">
+          <i class="fas fa-arrow-right-from-bracket"></i> Sign Out
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <div class="stat-val" id="studentTotalDays">0</div>
+          <div class="stat-lbl">Days Attended</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon teal"><i class="fas fa-fire"></i></div>
+        <div>
+          <div class="stat-val" id="studentStreakCount" style="color: #F59E0B;">0 Days 🔥</div>
+          <div class="stat-lbl">Attendance Streak</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-fingerprint"></i></div>
+        <div>
+          <div class="stat-val" id="studentFaceEnrollStatus" style="font-size: 1.1rem; color: #34D399;">
+            <i class="fas fa-circle-check"></i> Face ID Enrolled
+          </div>
+          <div class="stat-lbl">Biometric Status</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Action Cards -->
+    <h3 style="margin-bottom: 1.25rem;">Smart Attendance Controls</h3>
+    <div class="action-grid">
+      <!-- Mark Attendance -->
+      <div class="action-card" id="btnMarkAttendance">
+        <div class="action-icon"
+          style="background: rgba(37, 99, 235, 0.18); color: #60A5FA; border: 1px solid rgba(96, 165, 250, 0.3);">
+          <i class="fas fa-face-viewfinder"></i>
+        </div>
+        <div class="action-details">
+          <div class="action-title">Mark Attendance</div>
+          <div class="action-sub">Live face recognition & classroom geofence</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: var(--text-dim);"></i>
+      </div>
+
+      <!-- Live Location -->
+      <div class="action-card" id="btnLiveLocation">
+        <div class="action-icon"
+          style="background: var(--accent-emerald-light); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3);">
+          <i class="fas fa-satellite-dish"></i>
+        </div>
+        <div class="action-details">
+          <div class="action-title">Classroom Radar</div>
+          <div class="action-sub">View classroom distance radar & GPS zone</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: var(--text-dim);"></i>
+      </div>
+
+      <!-- Attendance History -->
+      <div class="action-card" id="btnAttendanceHistory">
+        <div class="action-icon"
+          style="background: rgba(79, 70, 229, 0.18); color: #818CF8; border: 1px solid rgba(129, 140, 248, 0.3);">
+          <i class="fas fa-clock-rotate-left"></i>
+        </div>
+        <div class="action-details">
+          <div class="action-title">Attendance History</div>
+          <div class="action-sub">Review timestamps & validation logs</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: var(--text-dim);"></i>
+      </div>
+    </div>
+
+    <!-- Strict Biometric & Radar Notice -->
+    <div class="card"
+      style="margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1.25rem; border-left: 4px solid #2563EB;">
+      <i class="fas fa-shield-halved" style="font-size: 2.2rem; color: #60A5FA;"></i>
+      <div>
+        <div style="font-weight: 700; font-size: 1.05rem;">Strict Biometric Face Protection</div>
+        <div style="font-size: 0.88rem; color: var(--text-muted);">
+          Every attendance scan is mathematically verified against your official enrolled Face ID. Other people cannot
+          mark attendance using your ID.
+        </div>
+      </div>
+    </div>
+
+    <!-- History Log Table -->
+    <div id="studentHistorySection">
+      <h3 style="margin-bottom: 1.25rem;">My Attendance Records</h3>
+      <div class="card" id="studentHistoryCard">
+        <div id="studentHistoryEmpty"
+          style="display: none; text-align: center; padding: 3rem 1rem; color: var(--text-dim);">
+          <i class="fas fa-calendar-xmark" style="font-size: 3.5rem; margin-bottom: 1rem; color: var(--text-dim);"></i>
+          <h4>No Attendance Records Yet</h4>
+          <p>Click "Mark Attendance" above to record your first attendance check-in.</p>
+        </div>
+
+        <div class="table-responsive" id="studentHistoryTableContainer">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Date & Time</th>
+                <th>Location Coordinates</th>
+                <th>Biometric Match</th>
+              </tr>
+            </thead>
+            <tbody id="studentHistoryTableBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       VIEW 5: ADMIN DASHBOARD & COMMAND CENTER
+       ============================================================ -->
+  <section class="view-container" id="adminDashboardView">
+    <!-- Header -->
+    <div
+      style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="font-size: 2.3rem;">Smart Attendance Command Center</h1>
+        <p style="color: var(--text-secondary);">Manage student user IDs, delete old accounts, track live check-ins, and
+          generate audit reports</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-outline" id="printReportBtn">
+          <i class="fas fa-print"></i> Print / PDF
+        </button>
+        <button class="btn btn-outline" id="adminLogoutBtn">
+          <i class="fas fa-arrow-right-from-bracket"></i> Sign Out
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+        <div>
+          <div class="stat-val" id="adminTotalStudentsCount">0</div>
+          <div class="stat-lbl">Registered Students</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon teal"><i class="fas fa-user-check"></i></div>
+        <div>
+          <div class="stat-val" id="adminTodayAttendanceCount">0</div>
+          <div class="stat-lbl">Present Today</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-chart-pie"></i></div>
+        <div>
+          <div class="stat-val" id="adminAttendanceRateMetric">95%</div>
+          <div class="stat-lbl">Attendance Rate</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber"><i class="fas fa-calendar-days"></i></div>
+        <div>
+          <div class="stat-val" id="adminActiveSchedulesCount">0</div>
+          <div class="stat-lbl">Class Schedules</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Charts Row -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;" id="chartsRow">
+      <!-- Line Chart -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.2rem;"><i class="fas fa-chart-line" style="color: #3B82F6; margin-right: 8px;"></i>
+            Weekly Attendance Trends</h3>
+          <span class="status-badge status-present"><i class="fas fa-circle" style="font-size: 0.5rem;"></i> Live
+            Sync</span>
+        </div>
+        <div style="height: 240px; width: 100%;">
+          <canvas id="attendanceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Doughnut Chart -->
+      <div class="card">
+        <h3 style="font-size: 1.2rem; margin-bottom: 1rem;"><i class="fas fa-chart-pie"
+            style="color: #8B5CF6; margin-right: 8px;"></i> Dept Breakdown</h3>
+        <div style="height: 240px; width: 100%;">
+          <canvas id="departmentChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div class="tabs-nav">
+      <button class="tab-btn admin-tab-btn active" data-tab="adminAttendanceRecordsTab">
+        <i class="fas fa-list-check"></i> Attendance Records
+      </button>
+      <button class="tab-btn admin-tab-btn" data-tab="adminStudentsDirectoryTab">
+        <i class="fas fa-users-gear"></i> Student Directory (Manage / Delete IDs)
+      </button>
+      <button class="tab-btn admin-tab-btn" data-tab="adminClassSchedulesTab">
+        <i class="fas fa-calendar-plus"></i> Timetables & Schedules
+      </button>
+      <button class="tab-btn admin-tab-btn" data-tab="adminLiveLocationsTab">
+        <i class="fas fa-map-location-dot"></i> Live Spatial Map
+      </button>
+    </div>
+
+    <!-- TAB 1: ATTENDANCE RECORDS -->
+    <div class="admin-tab-content" id="adminAttendanceRecordsTab">
+      <div class="card">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div style="flex: 1; min-width: 260px; max-width: 420px;">
+            <div class="form-input-group">
+              <i class="fas fa-search form-input-icon"></i>
+              <input type="text" id="attendanceSearchInput" class="form-input"
+                placeholder="Search by student email, USN, or status..." />
+            </div>
+          </div>
+          <button class="btn btn-teal" id="exportCsvBtn">
+            <i class="fas fa-file-csv"></i> Export Audit Report (CSV)
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Student Email</th>
+                <th>Timestamp</th>
+                <th>Status</th>
+                <th>Location</th>
+                <th>Face Match</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminAttendanceTableBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: STUDENT DIRECTORY (MANAGE & DELETE OLD USER IDS) -->
+    <div class="admin-tab-content" id="adminStudentsDirectoryTab" style="display: none;">
+      <div class="card">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h3>Student Directory</h3>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">Create new student profiles or remove obsolete user
+              IDs</p>
+          </div>
+          <button class="btn btn-primary" id="openAddStudentBtn">
+            <i class="fas fa-user-plus"></i> Add New Student
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Student Name & Email</th>
+                <th>USN (User ID)</th>
+                <th>Department</th>
+                <th>Semester & Section</th>
+                <th>College</th>
+                <th>Biometrics</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminStudentsTableBody">
+              <!-- Dynamically Populated with Remove User ID button -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CLASS SCHEDULES -->
+    <div class="admin-tab-content" id="adminClassSchedulesTab" style="display: none;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+        <!-- Add Schedule Form -->
+        <div class="card">
+          <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-plus-circle"
+              style="color: #F59E0B; margin-right: 8px;"></i> Create Class Schedule</h3>
+          <form id="addClassScheduleForm">
+            <div class="form-group">
+              <label class="form-label">Subject / Course Name</label>
+              <div class="form-input-group">
+                <i class="fas fa-book form-input-icon"></i>
+                <input type="text" id="schedSubject" class="form-input" placeholder="e.g. Artificial Intelligence"
+                  required />
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label class="form-label">Semester</label>
+                <div class="form-input-group">
+                  <i class="fas fa-graduation-cap form-input-icon"></i>
+                  <input type="text" id="schedSemester" class="form-input" placeholder="e.g. 6" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Section</label>
+                <div class="form-input-group">
+                  <i class="fas fa-users form-input-icon"></i>
+                  <input type="text" id="schedSection" class="form-input" placeholder="e.g. A" required />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Faculty Instructor</label>
+              <div class="form-input-group">
+                <i class="fas fa-user-tie form-input-icon"></i>
+                <input type="text" id="schedFaculty" class="form-input" placeholder="e.g. Prof. Alan Turing" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Room / Lab Designation</label>
+              <div class="form-input-group">
+                <i class="fas fa-door-open form-input-icon"></i>
+                <input type="text" id="schedRoom" class="form-input" placeholder="e.g. Lab 304" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Day of Week</label>
+              <select id="schedDay" class="form-select" required>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+              </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label class="form-label">Start Time</label>
+                <input type="text" id="schedStartTime" class="form-input" placeholder="09:00 AM" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">End Time</label>
+                <input type="text" id="schedEndTime" class="form-input" placeholder="10:00 AM" required />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+              <i class="fas fa-save"></i> Save Schedule
+            </button>
+          </form>
+        </div>
+
+        <!-- Schedule List -->
+        <div>
+          <h3 style="margin-bottom: 1.5rem;">Active Academic Timetables</h3>
+          <div class="schedule-grid" id="adminSchedulesGrid">
+            <!-- Dynamically Populated -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: LIVE LOCATION MAP & GEOFENCE CALIBRATION -->
+    <div class="admin-tab-content" id="adminLiveLocationsTab" style="display: none;">
+      <div class="card">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h3 style="margin-bottom: 0.25rem;"><i class="fas fa-satellite-dish"
+                style="color: #AB47BC; margin-right: 8px;"></i> Smart Attendance Geofence Map</h3>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">
+              Spatial pins of student attendance check-ins and classroom radar boundary.
+            </p>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btnCalibrateLocation">
+            <i class="fas fa-crosshairs"></i> Calibrate Classroom to Current GPS
+          </button>
+        </div>
+        <div id="adminLeafletMap" class="map-box" style="height: 500px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MODAL 1: BIOMETRIC FACE COMPARISON SCANNER HUD
+       ============================================================ -->
+  <div class="modal-overlay" id="scannerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-face-viewfinder" style="color: #60A5FA; font-size: 1.4rem;"></i>
+          <h3>Smart Attendance Face Comparison</h3>
+        </div>
+        <button class="btn btn-outline btn-sm" id="closeScannerModalBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="camera-container">
+          <video id="cameraVideo" autoplay playsinline></video>
+          <canvas id="captureCanvas" style="display: none;"></canvas>
+          <img id="previewImage" style="display: none;" alt="Captured Face" />
+
+          <!-- High-Tech HUD Viewfinder -->
+          <div class="hud-overlay" id="scannerHudOverlay">
+            <div class="face-guide-oval">
+              <div class="scanning-laser"></div>
+            </div>
+            <div class="hud-status-badge">
+              <i class="fas fa-crosshairs"></i>
+              <span id="hudStatusText">Position face inside center frame</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biometric Comparison Match Box -->
+        <div id="biometricCompareBox" class="biometric-compare-box" style="display: none;">
+          <div class="compare-faces-grid">
+            <div class="compare-face-item">
+              <div class="compare-avatar">
+                <img id="registeredFaceImg" src="" alt="Registered Face" />
+              </div>
+              <span style="font-size: 0.8rem; color: #60A5FA; font-weight: 700;">Registered Reference</span>
+            </div>
+
+            <div style="text-align: center;">
+              <div style="font-size: 1.4rem; color: #38BDF8; margin-bottom: 2px;"><i
+                  class="fas fa-arrows-left-right"></i></div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">
+                Biometric Match</div>
+            </div>
+
+            <div class="compare-face-item">
+              <div class="compare-avatar live-avatar">
+                <img id="liveCapturedFaceImg" src="" alt="Live Face" />
+              </div>
+              <span style="font-size: 0.8rem; color: #34D399; font-weight: 700;">Live Camera Scan</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 6px; display: flex; justify-content: space-between; font-size: 0.85rem;"
+            id="faceMatchScoreText">
+            <!-- Populated dynamically -->
+          </div>
+          <div class="match-progress-container">
+            <div class="match-progress-bar" id="faceMatchProgressBar"></div>
+          </div>
+        </div>
+
+        <div
+          style="background: rgba(10, 15, 29, 0.75); padding: 0.85rem 1.15rem; border-radius: var(--radius-md); border: 1px solid var(--border-glass); font-size: 0.85rem; color: var(--text-secondary); margin-top: 1rem;">
+          <i class="fas fa-shield-halved" style="color: #60A5FA; margin-right: 8px;"></i>
+          Attendance will only be accepted if your live face strictly matches your registered Face ID and you are inside
+          the classroom zone.
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancelScannerBtn">Cancel</button>
+        <button class="btn btn-primary" id="snapPhotoBtn">
+          <i class="fas fa-camera"></i> Capture & Compare Face
+        </button>
+        <button class="btn btn-outline" id="retryPhotoBtn" style="display: none;">
+          <i class="fas fa-rotate-left"></i> Retake
+        </button>
+        <button class="btn btn-teal" id="confirmAttendanceBtn" style="display: none;">
+          <i class="fas fa-check-circle"></i> Confirm & Mark Present
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 2: CLASSROOM RADAR GEOFENCE MODAL
+       ============================================================ -->
+  <div class="modal-overlay" id="locationModal">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-satellite-dish" style="color: #10B981; font-size: 1.4rem;"></i>
+          <h3>Classroom Geofence Radar</h3>
+        </div>
+        <button class="btn btn-outline btn-sm" id="closeLocationModalBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Circular Animated Radar HUD -->
+        <div class="radar-hud-box" id="classroomRadarBox">
+          <div class="radar-circle-1"></div>
+          <div class="radar-circle-2"></div>
+          <div class="radar-crosshair-h"></div>
+          <div class="radar-crosshair-v"></div>
+          <div class="radar-sweep-beam"></div>
+          <div class="radar-blip-target" id="radarBlipTarget" title="Student Position"></div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase;">Distance from Classroom
+            Center</div>
+          <div style="font-size: 2rem; font-weight: 800; color: #FFFFFF;" id="radarDistanceMeters">0m</div>
+        </div>
+
+        <div id="studentLeafletMap" class="map-box" style="height: 260px;"></div>
+
+        <div id="geoStatusText"
+          style="padding: 0.85rem 1.2rem; border-radius: var(--radius-md); background: rgba(10, 15, 29, 0.7); border: 1px solid var(--border-glass); font-size: 0.92rem;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="closeLocationBtnAction">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 3: ENROLL / UPDATE OFFICIAL FACE ID MODAL (STUDENT)
+       ============================================================ -->
+  <div class="modal-overlay" id="enrollFaceModal">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-id-badge" style="color: #3B82F6; font-size: 1.4rem;"></i>
+          <h3>Enroll Official Face ID</h3>
+        </div>
+        <button class="btn btn-outline btn-sm" id="closeEnrollFaceModalBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.25rem;">
+          Position your face clearly in the camera. This photo will be locked as your permanent official Face ID for all
+          future attendance comparisons.
+        </p>
+
+        <div class="camera-container" style="height: 320px;">
+          <video id="enrollVideo" autoplay playsinline></video>
+          <canvas id="enrollCanvas" style="display: none;"></canvas>
+          <img id="enrollPreview" style="display: none;" alt="Face ID Preview" />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="cancelEnrollBtn">Cancel</button>
+        <button type="button" class="btn btn-outline" id="startEnrollCamBtn" style="display: none;">
+          <i class="fas fa-video"></i> Start Camera
+        </button>
+        <button type="button" class="btn btn-primary" id="snapEnrollBtn">
+          <i class="fas fa-camera"></i> Capture Face
+        </button>
+        <button type="button" class="btn btn-teal" id="saveEnrollFaceBtn" style="display: none;">
+          <i class="fas fa-save"></i> Save Official Face ID
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 4: ADD NEW STUDENT PROFILE (ADMIN)
+       ============================================================ -->
+  <div class="modal-overlay" id="addStudentModal">
+    <div class="modal-content" style="max-width: 700px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-user-plus" style="color: #3B82F6; font-size: 1.4rem;"></i>
+          <h3>Register Student & Enroll Face</h3>
+        </div>
+        <button class="btn btn-outline btn-sm" id="closeAddStudentModalBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="addStudentForm">
+        <div class="modal-body">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Student Name</label>
+              <div class="form-input-group">
+                <i class="fas fa-user form-input-icon"></i>
+                <input type="text" id="regStudentName" class="form-input" placeholder="e.g. Alex Johnson" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">USN / User ID</label>
+              <div class="form-input-group">
+                <i class="fas fa-id-card form-input-icon"></i>
+                <input type="text" id="regStudentUsn" class="form-input" placeholder="e.g. 1MS22CS045" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="form-input-group">
+              <i class="fas fa-envelope form-input-icon"></i>
+              <input type="email" id="regStudentEmail" class="form-input" placeholder="student@gmail.com" required />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <div class="form-input-group">
+                <i class="fas fa-microchip form-input-icon"></i>
+                <input type="text" id="regStudentDept" class="form-input" placeholder="CSE" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Semester</label>
+              <div class="form-input-group">
+                <i class="fas fa-graduation-cap form-input-icon"></i>
+                <input type="text" id="regStudentSemester" class="form-input" placeholder="6" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Section</label>
+              <div class="form-input-group">
+                <i class="fas fa-users form-input-icon"></i>
+                <input type="text" id="regStudentSection" class="form-input" placeholder="A" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">College / Institute</label>
+            <div class="form-input-group">
+              <i class="fas fa-building-columns form-input-icon"></i>
+              <input type="text" id="regStudentCollege" class="form-input" placeholder="Smart Attendance Institute"
+                required />
+            </div>
+          </div>
+
+          <!-- Biometric Face Capture -->
+          <div class="form-group">
+            <label class="form-label">Biometric Face Enrollment (Webcam Reference Photo)</label>
+            <div style="display: flex; gap: 1.5rem; align-items: center; margin-top: 0.5rem;">
+              <div
+                style="width: 140px; height: 140px; border-radius: var(--radius-md); background: #0A0F1D; border: 2px dashed var(--border-glass); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <video id="regStudentVideo" style="display: none; width: 100%; height: 100%; object-fit: cover;"
+                  autoplay playsinline></video>
+                <canvas id="regStudentCanvas" style="display: none;"></canvas>
+                <img id="regStudentPreview" style="display: none; width: 100%; height: 100%; object-fit: cover;"
+                  alt="Student Face" />
+                <i class="fas fa-user-circle" id="regPhotoPlaceholderIcon"
+                  style="font-size: 4rem; color: var(--text-dim);"></i>
+              </div>
+              <div>
+                <button type="button" class="btn btn-outline btn-sm" id="regStartCamBtn" style="margin-bottom: 0.5rem;">
+                  <i class="fas fa-video"></i> Start Camera
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="regSnapBtn"
+                  style="display: none; margin-bottom: 0.5rem;">
+                  <i class="fas fa-camera"></i> Enroll Face
+                </button>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">This photo is used as the biometric baseline to
+                  compare during attendance.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelAddStudentBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save Student Profile
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div>
+        <strong>Smart Attendance</strong> &bull; Biometric Face Recognition & Geofence Radar System
+      </div>
+      <div class="footer-badges">
+        <span class="footer-badge"><i class="fas fa-shield-halved" style="color: #34D399;"></i> 256-Bit Encrypted</span>
+        <span class="footer-badge"><i class="fas fa-satellite-dish" style="color: #38BDF8;"></i> Live GPS Radar</span>
+        <span class="footer-badge"><i class="fas fa-brain" style="color: #818CF8;"></i> Neural Face Biometrics</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Leaflet Maps JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Face-API.js Neural Biometric Recognition -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+
+  <!-- Application Modules -->
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
