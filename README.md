@@ -1,73 +1,76 @@
-# Smart Attendance System 🎓📍📸
+# Smart Attendance - AI Face Biometrics & Geofence Radar Web Platform 🎓🌐
 
-An AI-powered Flutter application that automates student attendance tracking using **Facial Biometric Verification**, **GPS Geofencing**, and **Real-Time Class Scheduling** backed by **Google Firebase**.
+An ultra-modern, responsive enterprise web application for smart automated student attendance tracking using **Webcam Face Biometric Verification**, **GPS Geofencing Radar**, and **Dynamic Schedule Management** backed by **Google Firebase**.
 
 ---
 
 ## 🌟 Key Features
 
-### 👤 Student Portal
-- **AI Face Biometric Verification**: Live face detection and anti-spoofing checks powered by Google ML Kit.
-- **GPS Campus Geofencing**: Computes real-time GPS distance to classroom/campus coordinates to verify physical presence.
-- **Dynamic Class Schedules**: Attendance window validation with early allowance and grace periods (On-Time vs. Late tracking).
-- **Attendance History & Analytics**: Real-time percentage tracker with low-attendance warnings (< 75% threshold).
-- **Cloud Audit Logs**: Timestamped attendance photos securely uploaded to Firebase Storage.
+### 👤 Student Web Portal
+- **Live In-Browser Face Recognition**: Captures live camera frames using WebRTC with real-time biometric alignment and liveness checks.
+- **GPS Classroom Radar & Geofencing**: Computes distance to classroom coordinates using the HTML5 Geolocation API & Haversine formula (e.g. within 150m radius).
+- **Attendance Percentage Tracker**: Visual animated percentage ring with automatic alerts for students below the 75% attendance criteria.
+- **Dynamic Lecture Scheduling**: Validates attendance against real-time class periods with automatic On-Time vs. Late tagging and duplicate submission guards.
+- **Attendance History & Audit Logs**: Review attendance records with photo snapshots and exact GPS timestamps.
 
-### 🛡️ Admin & Faculty Portal
-- **Student Enrollment**: Register students with USN, department, section, and enrolled biometric portrait photos.
-- **Class Scheduling & Geofencing**: Configure class timings, room numbers, and custom GPS coordinates with adjustable radius thresholds.
-- **Real-Time Attendance Monitoring**: Search and filter attendance logs by student, USN, status (Present/Late), and date.
-- **Analytics & Shortage Defaulters Report**: Automatic detection of students below 75% attendance with one-click **CSV Report Export**.
+### 🛡️ Faculty & Admin Web Console
+- **Student Enrollment Manager**: Register students with USN, department, semester, section, and enrolled biometric portrait photos.
+- **Interactive Schedule & Geofence Coordinator**: Configure course schedules, room numbers, and set GPS coordinates directly with a single click ("Use My Location").
+- **Live Attendance Feed & Search**: Filter logs by Subject, Date, Status (Present/Late), or search by Student Name/USN.
+- **Defaulters Dashboard & CSV Export**: Automatically lists students with <75% attendance and provides one-click CSV export of full attendance logs.
 
 ---
 
-## 🏗️ Architecture & Folder Structure
+## 🛠️ Technology Stack
+- **Frontend Core**: Semantic HTML5, Vanilla ES6+ JavaScript Modules
+- **Design & UI**: Vanilla CSS3 (CSS Variables, Glassmorphism, Micro-animations, Outfit & Inter Typography)
+- **Mapping & Visuals**: Leaflet.js Geofence Radar Maps, FontAwesome 6 Pro Icons
+- **Backend & Database**: Firebase Authentication, Cloud Firestore, Firebase Storage (with LocalStorage fallback support)
+- **Local Dev Server**: Python 3 `http.server` with CORS enabled / `npx serve`
 
-```text
-lib/
-├── core/
-│   ├── constants/       # AppColors, AppConstants, geofence & status definitions
-│   ├── theme/           # Modern Material 3 light theme & styling
-│   └── utils/           # LocationHelper (GPS & Geofencing) & TimeHelper (schedule validation)
-├── models/              # StudentModel, AttendanceModel, ScheduleModel
-├── services/            # AuthService, FirestoreService, StorageService, FaceDetectorService
-├── screens/
-│   ├── auth/            # RoleSelection, StudentLogin, AdminLogin
-│   ├── student/         # StudentDashboard, MarkAttendance, AttendanceHistory
-│   └── admin/           # AdminDashboard, AdminStudents, AddStudent, AddSchedule, ViewSchedules, AdminAnalytics
-├── widgets/             # CustomButton, CustomTextField, StatBadge, EmptyStateWidget
-├── firebase_options.dart # Firebase configuration
-└── main.dart            # Clean application entrypoint
+---
+
+## 🚀 Quick Start Guide
+
+### Running Locally with Python:
+```bash
+python server.py
+```
+Open your browser at: `http://localhost:8080`
+
+### Running with Node / NPM:
+```bash
+npm start
+```
+or
+```bash
+npx serve -s . -l 8080
 ```
 
 ---
 
-## 🚀 Getting Started
+## 📁 Project Structure
 
-### Prerequisites
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.13.0 or higher)
-- Firebase Project configured for Android, iOS, or Web
-
-### Setup & Run
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/harshavh17/smart.git
-   cd smart
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Run on connected device / emulator:**
-   ```bash
-   flutter run
-   ```
+```text
+smart_attendance/
+├── assets/             # Brand logos, icons, favicons
+├── css/
+│   └── style.css       # Complete responsive enterprise stylesheet
+├── js/
+│   ├── app.js          # Master event listeners and navigation controller
+│   ├── auth.js         # Authentication, user roles, session management
+│   ├── student.js      # Student dashboard, webcam face scanner, GPS geofencing
+│   ├── admin.js        # Admin console, student management, schedule coordinator
+│   └── firebase-config.js # Firebase modular SDK initialization
+├── index.html          # Main single-page application entry point
+├── server.py           # Python local server with CORS support
+├── package.json        # NPM scripts configuration
+└── README.md           # Documentation
+```
 
 ---
 
-## 🔒 Security & Best Practices
-- **Cloud Storage**: Photos are stored in Firebase Storage (`student_profiles/` and `attendance_captures/`) rather than local file paths.
-- **Anti-Spoofing / Liveness**: Validates eye openness and single face presence before attendance submission.
-- **Duplicate Prevention**: Rejects duplicate attendance submissions for the same student, subject, and day.
+## 🔒 Security & Privacy
+- Biometric verification compares live webcam captures with registered portraits.
+- GPS validation guarantees student is physically within classroom boundaries.
+- Duplicate submission guards prevent multiple check-ins for the same class session.

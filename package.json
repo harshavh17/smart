@@ -1,0 +1,22 @@
+{
+  "name": "smart-attendance-website",
+  "version": "2.0.0",
+  "description": "Smart Attendance Web Application - AI Face Biometric Recognition & Real-Time GPS Geofencing",
+  "main": "index.html",
+  "scripts": {
+    "start": "python server.py",
+    "serve": "npx serve -s . -l 8080",
+    "dev": "python server.py"
+  },
+  "keywords": [
+    "attendance",
+    "face-recognition",
+    "geofencing",
+    "gps",
+    "biometric",
+    "firebase",
+    "smart-attendance"
+  ],
+  "author": "harshavh17",
+  "license": "MIT"
+}
